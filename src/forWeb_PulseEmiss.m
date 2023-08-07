@@ -86,7 +86,7 @@ pulse_idx = n+1; % index of time where want to input pulse - 2010
 
 pulse_time = FTime(pulse_idx); % what year is this actually
 % set pulse to 0 if want only a river pulse
-pulse_size = 0; % how big is pulse in Mg/yr, results are independent
+pulse_size = 100; % how big is pulse in Mg/yr, results are independent
 Anthro_pulse(pulse_idx) = Anthro_pulse(pulse_idx) + pulse_size; % implement pulse
 
     
@@ -135,3 +135,4 @@ if Lplot;
     legend('Steady','Pulse','Location','NorthWest')
     
 end
+

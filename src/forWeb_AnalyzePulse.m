@@ -22,7 +22,59 @@
 %   28 Mar 2023 - AF - edit code for pulse emissions setup
 % Helen M. Amos, hamos@hsph.harvard.edu
 %==========================================================================
+% get values of coefficients
+% First-order rate coefficients, k (1/yr)
+k_mat = forWeb_rate_coeffs(k_factors, Lriver_FHgP, IHgD_pristine, IHgP_pristine);
 
+% translate k values to correct coefficients
+k_A_oHgII = k_mat(1);
+k_A_tHgII = k_mat(2);
+k_A_tHg0 = k_mat(3);
+k_A_oHg0 = k_mat(4);
+fdep_tf = k_mat(5);
+fdep_ts = k_mat(6);
+fdep_ta = k_mat(7);
+k_Oc_ev = k_mat(8);
+k_Oc_sp1 = k_mat(9);
+k_Oc_vsi = k_mat(10);
+k_Oc_sp2 = k_mat(11);
+k_Oc_vis = k_mat(12);
+k_Oc_vid = k_mat(13);
+k_Oc_sp3 = k_mat(14);
+k_Oc_vdi = k_mat(15);
+k_Te_rf = k_mat(16);
+k_Te_p = k_mat(17);
+k_T_exfs = k_mat(18);
+k_T_exfa = k_mat(19);
+k_Te_BBf_1 = k_mat(20);
+k_Te_BBf_2 = k_mat(21);
+k_Te_rs = k_mat(22);
+k_T_exsf = k_mat(23);
+k_T_exsa = k_mat(24);
+k_Te_BBs_1 = k_mat(25);
+k_Te_BBs_2 = k_mat(26);
+k_Te_ra = k_mat(27);
+k_T_exaf = k_mat(28);
+k_T_exam = k_mat(29);
+k_Te_BBa_1 = k_mat(30);
+k_Te_BBa_2 = k_mat(31);
+k_T_riv_f = k_mat(32);
+k_T_riv_s = k_mat(33);
+k_T_riv_a = k_mat(34);
+k_O_riv_f = k_mat(35);
+k_O_riv_s = k_mat(36);
+k_O_riv_a = k_mat(37);
+E_geo = k_mat(38);
+f_HgPexport = k_mat(39);
+% Set biomass burning for anthropogenic era
+k_Te_BBf = k_Te_BBf_2; % fast soil
+k_Te_BBs = k_Te_BBs_2; % slow soil
+k_Te_BBa = k_Te_BBa_2; % armored soil    
+
+% set up time variable
+y_end = 2110;
+tspan    = -2000:dt:(y_end + 0.8);         % run all the way through end year
+t = tspan;
 % set pulse size equal to sum of river and atmospheric pulse (one should be
 % zero
 pulse_size_T = pulse_size + river_pulse;

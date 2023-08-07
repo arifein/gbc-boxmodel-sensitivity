@@ -104,12 +104,28 @@ Lscale      = 'best';   % 'best' = best estimate {DEFAULT}
                         % 'high' = high estimate
                                                   
 % Discharge of Hg from rivers based on Amos et al. (2014)
-forWeb_riverDischarge
+[IHgD_pristine, IHgP_pristine, t_SF, ... 
+    river_HgP_MgYr_save, river_HgD_MgYr_save] = forWeb_riverDischarge(Lriver, Lscale, Ldisp);
+%--------------------------------------------------------------------------
+% Set factors for uncertainty analysis
+%--------------------------------------------------------------------------
+k_factors = 1;
 
 %--------------------------------------------------------------------------
 % Pre-anthropogenic simulation
 %--------------------------------------------------------------------------
-forWeb_RunPreAnthro
+M = forWeb_RunPreAnthro(k_factors, Lplot, Ldisp, Lriver_FHgP, ...
+    IHgD_pristine, IHgP_pristine, dt);
+% Save steady-state preindustrial reservoir sizes (Mg)
+Ratm_PI = M(1,end); % atmosphere 
+Rtf_PI  = M(2,end);  % fast terrestrial
+Rts_PI  = M(3,end);  % slow terrestrial
+Rta_PI  = M(4,end);  % armored terrestrial
+Rocs_PI = M(5,end); % surface ocean
+Roci_PI = M(6,end); % intermediate ocean
+Rocd_PI = M(7,end); % deep ocean
+
+R_PI = [Ratm_PI; Rtf_PI; Rts_PI; Rta_PI; Rocs_PI; Roci_PI; Rocd_PI];
 
 %--------------------------------------------------------------------------
 % Anthropogenic simulation
@@ -143,29 +159,30 @@ scenario    = 'mid';     % 'mid'  = Streets' central estimate {DEFAULT}
 %Lplot = 1;             
 if (strcmp(emissInven, 'Pulse'))
     % Calculate pulse or steady emissions scenario (Mg/yr)
-    forWeb_PulseEmiss
     
     % Run steady scenario
-    Anthro = Anthro_steady;
-    river_pulse = 0;
+    Lpulse = 'steady';
+    
     % figure counter
     ff = 0;
-    forWeb_RunPulse
+    [M_steady, pulse_size, river_pulse, pulse_time] = forWeb_RunPulse(k_factors, ...
+        Lplot, Ldisp, Lriver_FHgP,...
+        IHgD_pristine, IHgP_pristine, R_PI, dt, ff, Lpulse, t_SF, ...
+        river_HgP_MgYr_save, river_HgD_MgYr_save);
 
-    M_steady = M; % save reservoirs
-
-    % Run pulse scenario    
-    Anthro = Anthro_pulse;
-    river_pulse = 100;
-    forWeb_RunPulse
-    M_pulse = M; % save reservoirs
+    % Run pulse scenario 
+    Lpulse = 'atmpulse';
+    [M_pulse, pulse_size, river_pulse,  pulse_time] = forWeb_RunPulse(k_factors,  ...
+        Lplot, Ldisp, Lriver_FHgP,...
+        IHgD_pristine, IHgP_pristine, R_PI, dt, ff, Lpulse, t_SF, ...
+        river_HgP_MgYr_save, river_HgD_MgYr_save);
     
     % Analyze pulse for EAMD/EAME equations
     forWeb_AnalyzePulse
 else
-    % Historical anthropogenic emissions (Mg/yr) 
-    forWeb_AnthroEmiss   
-
     % Run with all-time anthropogenic emissions                     
-    forWeb_RunAnthro
+    M = forWeb_RunAnthro(k_factors, Lplot, Ldisp, Lriver_FHgP, ...
+        IHgD_pristine, IHgP_pristine, R_PI, dt, t_SF, ...
+        river_HgP_MgYr_save, river_HgD_MgYr_save, ... 
+        emissInven, future, scenario);
 end
