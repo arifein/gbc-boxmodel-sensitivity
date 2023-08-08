@@ -79,7 +79,7 @@ Ldisp      = 0;         % 1 = yes {DEFAULT}
 %--------------------------------------------------------------------------
 % Set simulation time step
 %--------------------------------------------------------------------------
-dt = 0.2;               % timestep, years
+dt = 0.1;               % timestep, years
 
 %--------------------------------------------------------------------------
 % Pick options for updated river parameterization
@@ -109,8 +109,8 @@ Lscale      = 'best';   % 'best' = best estimate {DEFAULT}
 %--------------------------------------------------------------------------
 % Set factors for uncertainty analysis
 %--------------------------------------------------------------------------
-k_factors = 1;
-
+k_factors = ones(1,40);
+k_factors(1:40) = 1;
 %--------------------------------------------------------------------------
 % Pre-anthropogenic simulation
 %--------------------------------------------------------------------------
@@ -171,7 +171,7 @@ if (strcmp(emissInven, 'Pulse'))
         river_HgP_MgYr_save, river_HgD_MgYr_save);
 
     % Run pulse scenario 
-    Lpulse = 'riverpulse';
+    Lpulse = 'atmpulse';
     [M_pulse, pulse_size, river_pulse,  pulse_time] = forWeb_RunPulse(k_factors,  ...
         Lplot, Ldisp, Lriver_FHgP,...
         IHgD_pristine, IHgP_pristine, R_PI, dt, ff, Lpulse, t_SF, ...
@@ -192,3 +192,5 @@ else
         river_HgP_MgYr_save, river_HgD_MgYr_save, ... 
         emissInven, future, scenario);
 end
+
+disp(coeffs_emis)

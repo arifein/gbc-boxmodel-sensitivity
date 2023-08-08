@@ -272,7 +272,7 @@ function k_mat = forWeb_rate_coeffs(k_factors, Lriver_FHgP, IHgD_pristine, IHgP_
         k_T_riv_f, k_T_riv_s, k_T_riv_a, k_O_riv_f, k_O_riv_s, k_O_riv_a, E_geo, ...
         f_HgPexport];
     % scale by factors for uncertainty analysis
-    k_mat = k_mat_prescale * k_factors;
+    k_mat = k_mat_prescale .* k_factors(1:end-1);
     % make sure that fractional factors add up to one
     k_mat(5:7) = k_mat(5:7) / sum(k_mat(5:7));
 end

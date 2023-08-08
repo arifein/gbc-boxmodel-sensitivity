@@ -116,9 +116,6 @@ end
 t_pulse = t - (pulse_time + 0.5);
 % take data starting in year following pulse for making fit
 indx_fit_start = find(round(t,1) == pulse_time + 1 );
-if (strcmp(Lpulse,'riverpulse')) % only have a river pulse, no  atmos pulse
-    indx_fit_start = find(round(t,1) == pulse_time + 1.6 ); % ignore first 1.5 year where have jagged response
-end
 indx_fit_end = find(round(t,1) == pulse_time + 100.8 );
 
 t_fit = t_pulse(indx_fit_start:indx_fit_end);
@@ -143,6 +140,7 @@ ft_e2 = fittype("a*exp(b*x) + c*exp(d*x)", 'options', fo);
 [fit_e2, gof_e2] = fit(t_fit(:), emiss_diff_fit(:), ft_e2); 
 coeffs_e2 = coeffvalues(fit_e2);
 yfit_e2 = pulse_size_T * (coeffs_e2(1) * exp(coeffs_e2(2) * annual_t) + coeffs_e2(3) * exp(coeffs_e2(4) * annual_t)); 
+
 strfit_e2 = "fit v2: R^2 = " + sprintf('%0.3f',gof_e2.rsquare);
 streq_e2 = sprintf('%0.2f',coeffs_e2(1)) + "exp(" + sprintf('%0.2f',coeffs_e2(2)) ...
     + "t) + " + sprintf('%0.2f',coeffs_e2(3)) + "exp(" + ...
@@ -155,6 +153,7 @@ ind_max = find(coeffs_e2 == max(coeffs_e2(2), coeffs_e2(4)));% find larger expon
 
 coeffs_emis = [coeffs_e2(ind_min-1), -coeffs_e2(ind_min), coeffs_e2(ind_max-1), -coeffs_e2(ind_max)];
 %%
+
 if Lplot
     % make plot
     % colors to use
