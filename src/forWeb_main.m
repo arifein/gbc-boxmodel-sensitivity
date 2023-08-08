@@ -165,13 +165,13 @@ if (strcmp(emissInven, 'Pulse'))
     
     % figure counter
     ff = 0;
-    [M_steady, pulse_size, river_pulse, pulse_time] = forWeb_RunPulse(k_factors, ...
+    [M_steady, ~, ~, ~] = forWeb_RunPulse(k_factors, ...
         Lplot, Ldisp, Lriver_FHgP,...
         IHgD_pristine, IHgP_pristine, R_PI, dt, ff, Lpulse, t_SF, ...
         river_HgP_MgYr_save, river_HgD_MgYr_save);
 
     % Run pulse scenario 
-    Lpulse = 'atmpulse';
+    Lpulse = 'riverpulse';
     [M_pulse, pulse_size, river_pulse,  pulse_time] = forWeb_RunPulse(k_factors,  ...
         Lplot, Ldisp, Lriver_FHgP,...
         IHgD_pristine, IHgP_pristine, R_PI, dt, ff, Lpulse, t_SF, ...
@@ -179,6 +179,12 @@ if (strcmp(emissInven, 'Pulse'))
     
     % Analyze pulse for EAMD/EAME equations
     forWeb_AnalyzePulse
+    
+    % save out results
+    a1 = coeffs_emis(1);
+    b1 = coeffs_emis(2);
+    a2 = coeffs_emis(3);
+    b2 = coeffs_emis(4);
 else
     % Run with all-time anthropogenic emissions                     
     M = forWeb_RunAnthro(k_factors, Lplot, Ldisp, Lriver_FHgP, ...

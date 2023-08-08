@@ -129,8 +129,8 @@ function [M, pulse_size, river_pulse,  pulse_time] = forWeb_RunPulse(k_factors, 
     pulse_idx_r_s = find(round(t_river,1) == pulse_time ); % start index
     pulse_idx_r_e = find(round(t_river,1) == pulse_time + 1 - dt ); % end index
     % add river pulse for experiment
-    %frac_D = 0.043 / 100.; % fraction of released mercury going to dissolved phase
-    frac_D = 50 / 100.; % fraction of released mercury going to dissolved phase
+    frac_D = 0.043 / 100.; % fraction of released mercury going to dissolved phase
+    %frac_D = 50 / 100.; % fraction of released mercury going to dissolved phase
     frac_P = 1 - frac_D; % fraction of released mercury going to particulate phase
     rivHgP_MgYr(pulse_idx_r_s:pulse_idx_r_e) = rivHgP_MgYr(pulse_idx_r_s:pulse_idx_r_e) + frac_P * river_pulse; % add release to particulate
     rivHgD_MgYr(pulse_idx_r_s:pulse_idx_r_e) = rivHgD_MgYr(pulse_idx_r_s:pulse_idx_r_e) + frac_D * river_pulse; % add release to dissolved
