@@ -106,91 +106,35 @@ Lscale      = 'best';   % 'best' = best estimate {DEFAULT}
 % Discharge of Hg from rivers based on Amos et al. (2014)
 [IHgD_pristine, IHgP_pristine, t_SF, ... 
     river_HgP_MgYr_save, river_HgD_MgYr_save] = forWeb_riverDischarge(Lriver, Lscale, Ldisp);
+
 %--------------------------------------------------------------------------
 % Set factors for uncertainty analysis
 %--------------------------------------------------------------------------
-k_factors = ones(1,40);
-k_factors(1:40) = 1;
-%--------------------------------------------------------------------------
-% Pre-anthropogenic simulation
-%--------------------------------------------------------------------------
-M = forWeb_RunPreAnthro(k_factors, Lplot, Ldisp, Lriver_FHgP, ...
-    IHgD_pristine, IHgP_pristine, dt);
-% Save steady-state preindustrial reservoir sizes (Mg)
-Ratm_PI = M(1,end); % atmosphere 
-Rtf_PI  = M(2,end);  % fast terrestrial
-Rts_PI  = M(3,end);  % slow terrestrial
-Rta_PI  = M(4,end);  % armored terrestrial
-Rocs_PI = M(5,end); % surface ocean
-Roci_PI = M(6,end); % intermediate ocean
-Rocd_PI = M(7,end); % deep ocean
+n_params = 40; % number of uncertainty parameters
+n_samples = 1000; % number of samples to take
+% initializing coefficients to store
+a1 = zeros(n_samples, 1);
+b1 = zeros(n_samples, 1);
+a2 = zeros(n_samples, 1);
+b2 = zeros(n_samples, 1);
 
-R_PI = [Ratm_PI; Rtf_PI; Rts_PI; Rta_PI; Rocs_PI; Roci_PI; Rocd_PI];
-
-%--------------------------------------------------------------------------
-% Anthropogenic simulation
-%--------------------------------------------------------------------------
-
-% Select a historial emission inventory
-emissInven = 'Pulse'; % 'Horowitz'  = Horowitz et al. (2014), which is 
-                         %               basically Streets et al. (2011) 
-                         %               plus additional emissions from 
-                         %               commercial Hg use. {DEFAULT}
-                         % 'Streets'   = Streets et al. (2011)
-                         % 'Engstrom'  = this is the Streets et al. (2011) 
-                         %               inventory with historical mining
-                         %               emissions cut by 50%, as proposed 
-                         %               by Engstrom et al. (2014)
-                         
-% Run to 2050?       
-future      = 'none';    % 'none' = stop at 2008 {DEFAULT}
-                         %
-                         % Future scenarios from Amos et al. (2013, GBC):
-                         % 'A1B'      = business-as-usual from Streets et al., 2009
-                         % 'constant' = constant emisions, effectively B1 from Streets et al., 2009
-                         % 'controls' = 2050 emissions are 50% of 2008 emissions
-                         % 'zero'     = zero future primary anthropgenic emissions
-                         
- 
-% Streets et al. (2011) all-time anthropogenic emissions                    
-scenario    = 'mid';     % 'mid'  = Streets' central estimate {DEFAULT}
-                         % 'low'  = Streets' lower 80% confidence interval
-                         % 'high' = Streets' upper 80% confidence interval
-%Lplot = 1;             
-if (strcmp(emissInven, 'Pulse'))
-    % Calculate pulse or steady emissions scenario (Mg/yr)
-    
-    % Run steady scenario
-    Lpulse = 'steady';
-    
-    % figure counter
-    ff = 0;
-    [M_steady, ~, ~, ~] = forWeb_RunPulse(k_factors, ...
-        Lplot, Ldisp, Lriver_FHgP,...
-        IHgD_pristine, IHgP_pristine, R_PI, dt, ff, Lpulse, t_SF, ...
-        river_HgP_MgYr_save, river_HgD_MgYr_save);
-
-    % Run pulse scenario 
-    Lpulse = 'atmpulse';
-    [M_pulse, pulse_size, river_pulse,  pulse_time] = forWeb_RunPulse(k_factors,  ...
-        Lplot, Ldisp, Lriver_FHgP,...
-        IHgD_pristine, IHgP_pristine, R_PI, dt, ff, Lpulse, t_SF, ...
-        river_HgP_MgYr_save, river_HgD_MgYr_save);
-    
-    % Analyze pulse for EAMD/EAME equations
-    forWeb_AnalyzePulse
-    
+lhs_values = lhsdesign(n_samples,n_params) * 2 -1; % create Latin Hypercube sample - between -1 and 1
+f_vary = 2; % range multiplication factor between 1/f_vary and f_vary
+factor_values = f_vary.^lhs_values; % calculate actual perturbation multiplication factors
+tic
+parfor uu = 1:n_samples
+    "Uncertainty simulation " + uu
+    k_factors = factor_values(uu,:); % factors to perturb parameters
+    coeffs_emis = main_function(k_factors, Lplot, Ldisp, ...
+        Lriver_FHgP, IHgD_pristine, IHgP_pristine, dt, t_SF, ...
+        river_HgP_MgYr_save, river_HgD_MgYr_save)
     % save out results
-    a1 = coeffs_emis(1);
-    b1 = coeffs_emis(2);
-    a2 = coeffs_emis(3);
-    b2 = coeffs_emis(4);
-else
-    % Run with all-time anthropogenic emissions                     
-    M = forWeb_RunAnthro(k_factors, Lplot, Ldisp, Lriver_FHgP, ...
-        IHgD_pristine, IHgP_pristine, R_PI, dt, t_SF, ...
-        river_HgP_MgYr_save, river_HgD_MgYr_save, ... 
-        emissInven, future, scenario);
+    a1(uu) = coeffs_emis(1);
+    b1(uu) = coeffs_emis(2);
+    a2(uu) = coeffs_emis(3);
+    b2(uu) = coeffs_emis(4);
+    disp(coeffs_emis)
 end
+toc
 
-disp(coeffs_emis)
+save("atm_pulse_1000_sens.mat","a1","a2","b1","b2", "factor_values")

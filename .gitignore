@@ -1,4 +1,5 @@
 ._*.m
+*.mat
 *.asv
 figs/
 .DS_Store
