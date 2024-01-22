@@ -137,4 +137,4 @@ parfor uu = 1:n_samples
 end
 toc
 
-save("atm_pulse_1000_sens.mat","a1","a2","b1","b2", "factor_values")
+save("river_pulse_1000_sens.mat","a1","a2","b1","b2", "factor_values")

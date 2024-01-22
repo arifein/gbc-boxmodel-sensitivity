@@ -258,7 +258,7 @@ function k_mat = forWeb_rate_coeffs(k_factors, Lriver_FHgP, IHgD_pristine, IHgP_
     k_T_riv_a      = (Te_riv_margin*fsoil*fCarmored) / Rta;                      % armored
 
     % Of the riverine discharge of terrestrial Hg to ocean margins this is what
-    % reaches the open ocean
+    % reaches the open oceanHgPexport
     k_O_riv_f      = (Te_riv_ocean*fveg + (Te_riv_ocean*fsoil*fCfast)) / Rtf;    % fast
     k_O_riv_s      = (Te_riv_ocean*fsoil*fCslow) / Rts;                          % slow
     k_O_riv_a      = (Te_riv_ocean*fsoil*fCarmored) / Rta;                       % armored

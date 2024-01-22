@@ -141,7 +141,7 @@ ft_e2 = fittype("a*exp(b*x) + c*exp(d*x)", 'options', fo);
 coeffs_e2 = coeffvalues(fit_e2);
 yfit_e2 = pulse_size_T * (coeffs_e2(1) * exp(coeffs_e2(2) * annual_t) + coeffs_e2(3) * exp(coeffs_e2(4) * annual_t)); 
 
-strfit_e2 = "fit v2: R^2 = " + sprintf('%0.3f',gof_e2.rsquare);
+strfit_e2 = "fit: R^2 = " + sprintf('%0.3f',gof_e2.rsquare);
 streq_e2 = sprintf('%0.2f',coeffs_e2(1)) + "exp(" + sprintf('%0.2f',coeffs_e2(2)) ...
     + "t) + " + sprintf('%0.2f',coeffs_e2(3)) + "exp(" + ...
     sprintf('%0.2f',coeffs_e2(4)) + "t)";
