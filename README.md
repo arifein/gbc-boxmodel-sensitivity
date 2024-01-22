@@ -12,6 +12,10 @@ Questions or comments? Contact:
   Email: ems@seas.harvard.edu or thackray@seas.harvard.edu
   Web: http://bgc.seas.harvard.edu
 
+UPDATES TO CODE:
+ A. Feinberg, Jan 2024
+ New added capabilities of running pulse experiments to analyze response of legacy emissions to anthropogenic emissions and releases. Additional capability of running sensitivity analyses with varying model parameters.
+
 ## Citation for code
  1. Amos, H. M., D.J. Jacob, D.G. Streets, E.M. Sunderland (2013), Legacy impacts of all-time anthropogenic emissions on the global mercury cycle, Glob. Biogeochem. Cycle, 27(2), 410-421.
  1. Amos, H. M., et al. (2014), Global biogeochemical implications of mercury discharges from rivers and sediment burial, Environ. Sci.Technol., 48(16), 9514-9522.
@@ -102,3 +106,15 @@ whichever anthropogenic emission inventory the user has selected in
 forWeb_main.m.
 
 `forWeb_displayOutput.m`: Prints model results to the Command Window.
+
+---NEW FILES FOR PULSE EXPERIMENTS---
+`forWeb_PulseEmiss.m': Sets up emissions scenario for a pulse in
+anthropogenic Hg emissions
+
+`forWeb_RunPulse.m': run pulse simulations for selected time period
+and size of pulse, whether as an emission or a release
+
+`forWeb_AnalyzePulse.m': Analyze the pulse experiment and calculate
+coefficients for estimating effective anthropogenic mercury emissions (EAME)
+due to legacy re-emissions after the pulse
+
